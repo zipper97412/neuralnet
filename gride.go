@@ -50,26 +50,17 @@ func NewGride(layerLens []int) *Gride {
         }
     }
     G.HiddenLayers = make([][]Neurone, len(layerLens)-2)
-    for i, v := range G.HiddenLayers {
-        v = make([]Neurone, layerLens[i+1])
-        for j, k := range v {
-            k = Neurone{}
-            k.S = &Summer{}
+    for i := 0;i<len(G.HiddenLayers);i++ {
+        G.HiddenLayers[i] = make([]Neurone, layerLens[i+1])
+        for j :=0;j<len(G.HiddenLayers[i]);j++ {
+            G.HiddenLayers[i][j] = NewNeurone()
             for n := 0;n<layerLens[i];n++ {
-                k.S.LinkInAdd(G.ChanRegister[i][n][j])
+                G.HiddenLayers[i][j].S.LinkInAdd(G.ChanRegister[i][n][j])
             }
-            k.chanST = make(chan float64)
-            k.S.LinkOut(k.chanST)
-            k.T = &Transitor{}
-            k.T.LinkIn(k.chanST)
-            k.chanTD = make(chan float64)
-            k.T.LinkOut(k.chanTD)
-            k.D = &Dispatcher{}
-            k.D.LinkIn(k.chanTD)
             for _, x := range G.ChanRegister[i+1][j] {
-                k.D.LinkOutAdd(x)
+                G.HiddenLayers[i][j].D.LinkOutAdd(x)
             }
-            k.Start()
+            G.HiddenLayers[i][j].Start()
         }
     }
     return &G

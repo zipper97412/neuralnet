@@ -49,6 +49,7 @@ type Summer struct {
     OutputChan chan<- float64
     updated chan bool
 }
+
 func (s *Summer)LinkInAdd(ch <-chan float64) {
     s.InputsChan = append(s.InputsChan, ch)
     s.Weights = append(s.Weights, 1)
@@ -68,6 +69,7 @@ func (s *Summer)LinkInAdd(ch <-chan float64) {
         }
     }(index)
 }
+
 func (s *Summer)LinkOut(ch chan<- float64) {
     s.OutputChan = ch
 }
@@ -122,9 +124,12 @@ func (s *Dispatcher)LinkOutAdd(ch chan<- float64) {
 func (s *Dispatcher)Start() {
     
     go func() {
+        fmt.Println("dispatcher")
         input, more := <- s.InputChan
+        fmt.Println("réception de",input, "dans Dispatcher")
         for _, v := range s.OutputsChan {
             v <- input
+            fmt.Println("envoi de",input, "par Dispatcher")
         }
         if !more {
             for _, v := range s.OutputsChan {
@@ -148,4 +153,17 @@ func (s *Neurone)Start() {
     s.S.Start()
     s.T.Start()
     s.D.Start()
+}
+func NewNeurone() Neurone {
+    ret := Neurone{}
+    ret.S = &Summer{}
+    ret.T = &Transitor{}
+    ret.D = &Dispatcher{}
+    ret.chanTD = make(chan float64)
+    ret.chanST = make(chan float64)
+    ret.S.LinkOut(ret.chanST)
+    ret.T.LinkIn(ret.chanST)
+    ret.T.LinkOut(ret.chanTD)
+    ret.D.LinkIn(ret.chanTD)
+    return ret
 }
