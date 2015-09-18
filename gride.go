@@ -12,8 +12,8 @@ type Gride struct {
     OutputLayer []Summer
     OutputsChan []chan float64
 }
-coucou
-sfsd func NewGride(layerLens []int) *Gride {
+
+func NewGride(layerLens []int) *Gride {
     
     G := Gride{}
     G.InputsChan = make([]chan float64, layerLens[0])
