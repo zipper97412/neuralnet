@@ -12,7 +12,7 @@ type Gride struct {
     OutputLayer []Summer
     OutputsChan []chan float64
 }
-
+//coucou
 func NewGride(layerLens []int) *Gride {
     
     G := Gride{}
