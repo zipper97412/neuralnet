@@ -3,10 +3,7 @@ package neuralnet
 import (
     "fmt"
     )
-    
-    
-    
-    
+    xcvwcx
 type Transitor struct {
     InputChan <-chan float64
     OutputChan chan<- float64
